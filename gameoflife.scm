@@ -20,7 +20,11 @@
               (set! grid new-grid)
               (set! height new-height)
               (set! width new-width))))
-    (define (step!) (set! grid (updategrid grid height width)))
+    (define* (step! #:optional (num-steps 1))
+      (do ((i 0))
+        ((= num-steps i))
+        (set! grid (updategrid grid height width))
+        (set! i (+ i 1))))
     ; public interface
     (define (self message)
       (cond ((eqv? message 'getgrid) getgrid)
@@ -62,16 +66,11 @@
                                    ((< j 0) 0)
                                    ((>= j width) 0)
                                    (else (array-ref grid i j))))))
-    (for-each (lambda (i)
-                (for-each (lambda (j)
-                            (array-set! newgrid
-                                        (update-cell 
-                                          (array-ref grid i j)
-                                          i j)
-                                        i j))
-                          (iota width)))
-              (iota height))
-    newgrid))
+    (list->array 2 (map (lambda (i)
+                         (map (lambda (j)
+                                (update-cell (array-ref grid i j) i j))
+                              (iota width)))
+                         (iota height)))))
 
 ;---- Library/sugar functions
 (define (send message object . args)
