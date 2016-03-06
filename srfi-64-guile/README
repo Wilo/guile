@@ -1,0 +1,92 @@
+1. srfi/srfi-64.scm is a SRFI-64 implementation for Guile 2.0.
+   srfi-64-test.scm is a test suite for SRFI-64 itself by Donovan Kolbly.
+
+   $ ls -RF
+   .:
+   README  srfi/  srfi-64-test.scm
+   ./srfi:
+   srfi-64.scm
+   $
+
+2. srfi/srfi-64.scm provide the srfi-64 module for Guile.
+
+   $ guile -L . --use-srfi=64 srfi-64-test.scm
+   %%%% Starting test SRFI 64 - Meta-Test Suite  (Writing full log to "SRFI 64 - Meta-Test Suite.log")
+   # of expected passes      51
+   # of expected failures    2
+   $ ls -F
+   README  SRFI 64 - Meta-Test Suite.log  srfi/  srfi-64-test.scm
+   $
+
+3. Somethings were changed:
+   1) test-log-to-file is a parameter object.
+   2) test-on-test-end-simple and test-on-final-simple have a return value.
+   3) and so on.
+
+   Example of log to another file:
+
+   $ guile -L `pwd`
+   scheme@(guile-user)> (use-modules (srfi srfi-64))
+   scheme@(guile-user)> (test-log-to-file (open-output-file "my-log.log"))
+   scheme@(guile-user)> (load "srfi-64-test.scm")
+   %%%% Starting test SRFI 64 - Meta-Test Suite
+   # of expected passes      51
+   # of expected failures    2
+   $1 = (51 2 0 0 0)
+   scheme@(guile-user)> (close-output-port (test-log-to-file))
+   scheme@(guile-user)> ,q
+   $
+
+   Contents of log files are same:
+
+   $ ls -F
+   README  SRFI 64 - Meta-Test Suite.log  my-log.log  srfi/  srfi-64-test.scm
+   $ diff SRFI\ 64\ -\ Meta-Test\ Suite.log my-log.log 
+   $ rm SRFI\ 64\ -\ Meta-Test\ Suite.log my-log.log 
+   $ ls -F
+   README  srfi/  srfi-64-test.scm
+   $
+
+   Example of not log:
+
+   $ guile -L `pwd`
+   scheme@(guile-user)> (use-modules (srfi srfi-64))
+   scheme@(guile-user)> (test-log-to-file #f)
+   scheme@(guile-user)> (load "srfi-64-test.scm")
+   %%%% Starting test SRFI 64 - Meta-Test Suite
+   # of expected passes      51
+   # of expected failures    2
+   $1 = (51 2 0 0 0)
+   scheme@(guile-user)> ,q
+   $
+
+   The log file were not generated:
+
+   $ ls -F
+   README  srfi/  srfi-64-test.scm
+   $
+
+   Example in Guile interactive mode:
+
+   $ guile -L `pwd`
+   scheme@(guile-user)> (use-modules (srfi srfi-64))
+   scheme@(guile-user)> (test-log-to-file #f)
+   scheme@(guile-user)> (test-begin "vec-test")
+   %%%% Starting test vec-test
+   $1 = ("vec-test")
+   scheme@(guile-user)> (define v (make-vector 5 99))
+   scheme@(guile-user)> (test-assert (vector? v))
+   $2 = pass
+   scheme@(guile-user)> (test-eqv 99 (vector-ref v 2))
+   $3 = pass
+   scheme@(guile-user)> (vector-set! v 2 7)
+   scheme@(guile-user)> (test-eqv 7 (vector-ref v 2))
+   $4 = pass
+   scheme@(guile-user)> (test-eqv 8 (vector-ref v 2))
+   $5 = fail
+   scheme@(guile-user)> (test-end "vec-test")
+   # of expected passes      3
+   # of unexpected failures  1
+   $6 = (3 0 0 1 0)
+   scheme@(guile-user)> ,q
+   $

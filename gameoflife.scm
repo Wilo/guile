@@ -1,6 +1,17 @@
+(define-module (game-of-life)
+  #:export (game-of-life
+            pretty-print-grid
+            grid-from-file
+            send
+            new-instance))
+
 (use-modules
  ;pattern matching
  (ice-9 match)
+
+ ;read-string
+ (ice-9 rdelim)
+
  ;list manipulations
  (srfi srfi-1))
 
@@ -10,8 +21,9 @@
   (let ((grid #nil)
         (width #nil)
         (height #nil))
-    ; private properties
-    (define (getgrid) grid)
+    ; private implementation
+    (define (getgrid)
+      (array->list grid))
     (define (setgrid! new-grid)
       (match (storegrid new-grid)
              ((new-height new-width new-grid)
@@ -31,6 +43,7 @@
 ;---- internal function implementations
 
 ; use arrays internally for lookup performance: https://www.gnu.org/software/guile/manual/html_node/Array-Procedures.html#Array-Procedures
+
 (define (storegrid grid)
   (let ((height (length grid))
         (width (length (car grid)))
@@ -39,8 +52,7 @@
 
 ; rules here
 (define (updategrid grid height width)
-  (letrec ((newgrid (make-array 0 height width))
-           (update-cell (lambda (old-cell i j)
+  (letrec ((update-cell (lambda (old-cell i j)
                           (let ((num-neighbors (live-neighbors i j)))
                             (cond ((eq? old-cell 1) ;live cells survive with 2/3 live neighbours
                                    (cond ((or (= num-neighbors 2) (= num-neighbors 3)) 1)
@@ -68,7 +80,7 @@
                               (iota width)))
                          (iota height)))))
 
-;---- other functions
+;---- other public functions
 
 ; pretty grid print
 ;[[int]] -> ()
