@@ -1,6 +1,6 @@
 # Conway's Game of Life in Guile
 
-This is [Conway's Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life), written in [Guile](http://www.gnu.org/software/guile/), an implementation of the Scheme programming language. To augment the more idiomatic Scheme implementation on [Rosetta Code](http://rosettacode.org/wiki/Conway%27s_Game_of_Life), this version explores how one deals with the more day-to-day aspects of sofware development in Guile, such as:
+This is [Conway's Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life), written in [Guile](http://www.gnu.org/software/guile/), an implementation of the Scheme programming language. To augment the more idiomatic Scheme implementation on [Rosetta Code](http://rosettacode.org/wiki/Conway%27s_Game_of_Life), this version explores how one deals with the more day-to-day aspects of software development in Guile, such as:
 
 * Code organisation with modules
 * Encapsulation with closures and message passing
