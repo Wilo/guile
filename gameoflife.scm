@@ -15,7 +15,6 @@
  ;list manipulations
  (srfi srfi-1))
 
-; see gameoflife_test.scm for running
 (define (game-of-life)
   ; initialisation
   (let ((grid #nil)
@@ -34,16 +33,15 @@
       (set! grid (updategrid grid height width)))
     ; public interface
     (define (self message)
-      (cond ((eqv? message 'getgrid) getgrid)
-            ((eqv? message 'setgrid!) setgrid!) ;sets up a new grid
-            ((eqv? message 'step!) step!) ;
+      (cond ((eqv? message 'getgrid) getgrid) ;() -> [[int]]
+            ((eqv? message 'setgrid!) setgrid!) ;[[int]] -> ()
+            ((eqv? message 'step!) step!) ;() -> ()
             (else (error "Undefined message" message))))
     self))
 
 ;---- internal function implementations
 
 ; use arrays internally for lookup performance: https://www.gnu.org/software/guile/manual/html_node/Array-Procedures.html#Array-Procedures
-
 (define (storegrid grid)
   (let ((height (length grid))
         (width (length (car grid)))
@@ -82,19 +80,17 @@
 
 ;---- other public functions
 
-; pretty grid print
-;[[int]] -> ()
+;string representation of grid
+;[[int]] -> string
 (define* (pretty-print-grid grid #:optional (live #\o) (dead #\-))
   (let ((int->cell (lambda (int)
                      (cond ((= int 1) live)
                            (else dead)))))
-    (for-each (lambda (row)
-                (for-each (lambda (int)
-                            (display (int->cell int)))
-                          row)
-                (display #\newline))
-              grid)))
-
+    (string-join
+      (map (lambda (row)
+             (list->string (map int->cell row)))
+           grid)
+      "\n")))
 
 ; filename -> [[int]]
 ; file should contain an rectangular array of characters. The 'alive' character representation can be optionally set (assumed to be 'o' (lowercase O))
